@@ -239,7 +239,7 @@ button:active {
     background: var(--card-bg);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
-    padding: 24px;
+    padding: 40px 24px;
     width: 100%;
     position: relative;
     overflow: hidden;
@@ -328,4 +328,24 @@ input[type="email"]:focus {
     color: #4CAF50;
     margin-top: 12px;
     font-weight: 600;
+}
+
+/* --- PAYWALL UPDATES --- */
+.subtext-price {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-top: -4px;
+    margin-bottom: 8px;
+}
+
+.per-search {
+    font-size: 0.9rem;
+    color: #4CAF50;
+    /* Green for "good deal" */
+    font-weight: 600;
+    background: rgba(76, 175, 80, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-top: 4px;
+    display: inline-block;
 }

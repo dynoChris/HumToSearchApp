@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,10 +9,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         /* Critical CSS to prevent FOUC */
-        body { background-color: #050510; color: white; margin: 0; }
-        .hidden { display: none !important; }
+        body {
+            background-color: #050510;
+            color: white;
+            margin: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
+
 <body>
 
     <div id="app">
@@ -21,13 +30,14 @@
                 <div class="logo-area">
                     <div class="icon-pulse">
                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 3V21M9 6V18M15 6V18M6 9V15M18 9V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 3V21M9 6V18M15 6V18M6 9V15M18 9V15" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </div>
                     <h1>Hum to Search</h1>
                     <p>Find that song stuck in your head.</p>
                 </div>
-                
+
                 <button id="btn-start" class="btn-primary">
                     <span class="icon">🎤</span> Tap to Hum
                 </button>
@@ -39,7 +49,7 @@
             <div class="content-center">
                 <h2>Listening...</h2>
                 <p class="subtext">Hum the melody clearly</p>
-                
+
                 <div class="visualizer">
                     <div class="bar"></div>
                     <div class="bar"></div>
@@ -68,24 +78,28 @@
                 <div class="success-icon">✨</div>
                 <h2>Song Found!</h2>
                 <p>We have identified your song with <strong>98% accuracy</strong>.</p>
-                
+
                 <div class="paywall-card">
                     <div class="blur-overlay">
                         <div class="fake-song-row"></div>
                         <div class="fake-song-row shorter"></div>
                     </div>
                     <div class="lock-content">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z"/>
-                            <path d="M7 11V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7V11"/>
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M19 11H5C3.89543 11 3 11.8954 3 13V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V13C21 11.8954 20.1046 11 19 11Z" />
+                            <path d="M7 11V7C7 4.23858 9.23858 2 12 2C14.7614 2 17 4.23858 17 7V11" />
                         </svg>
                         <h3>Unlock Result</h3>
                         <p class="price">£1.99</p>
+                        <p class="subtext-price">for 20 searches</p>
+                        <p class="per-search highlight">Just £0.10 per search!</p>
                     </div>
                 </div>
 
                 <button id="btn-pay" class="btn-primary full-width">
-                    Pay £1.99 to Reveal
+                    Get 20 Searches - £1.99
                 </button>
                 <div class="trust-badges">
                     <span>🔒 Secure Payment</span>
@@ -98,8 +112,9 @@
             <div class="content-center">
                 <div class="heart-icon">Testing</div>
                 <h2>Thanks for your interest!</h2>
-                <p>We are currently testing this feature. The ability to identify songs by humming is coming very soon!</p>
-                
+                <p>We are currently testing this feature. The ability to identify songs by humming is coming very soon!
+                </p>
+
                 <div class="notify-form">
                     <p>Enter your email to get notified when it's ready:</p>
                     <input type="email" id="email-input" placeholder="name@example.com">
@@ -113,4 +128,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
