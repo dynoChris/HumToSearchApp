@@ -176,7 +176,15 @@
         <section id="screen-recording" class="screen hidden">
             <div class="content-center">
                 <h2>Listening...</h2>
-                <p class="subtext">Hum the melody clearly</p>
+                <p id="recording-hint" class="subtext"
+                    data-start="Please sing or speak into the microphone"
+                    data-silence="Please keep singing."
+                    data-continue="Keep going."
+                    data-almost="Almost there, keep singing."
+                    data-wait="Great job. Keep singing a bit longer."
+                    data-retry="Try again.">
+                    Hum the melody clearly
+                </p>
 
                 <div class="visualizer">
                     <div class="bar"></div>
@@ -185,6 +193,7 @@
                     <div class="bar"></div>
                     <div class="bar"></div>
                 </div>
+                <button id="btn-try-again" class="btn-secondary hidden">Try again</button>
             </div>
             <button id="btn-stop-early" class="btn-text">Cancel</button>
         </section>
