@@ -23,6 +23,21 @@ document.addEventListener('DOMContentLoaded', () => {
         notifySuccess: document.getElementById('notify-success')
     };
 
+    const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+    function isValidEmail(value) {
+        return emailPattern.test(value);
+    }
+
+    function trackTiktokEvent(pixelId, eventName) {
+        if (window.ttq && typeof window.ttq.instance === 'function') {
+            const instance = window.ttq.instance(pixelId);
+            if (instance && typeof instance.track === 'function') {
+                instance.track(eventName);
+            }
+        }
+    }
+
     // === STATE MANAGEMENT ===
     let recordingTimeout;
     let processingTimeout;
@@ -164,28 +179,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 4. Pay Button Click -> Notify Screen
     buttons.pay.addEventListener('click', () => {
-        if (window.ttq && typeof window.ttq.track === 'function') {
-            window.ttq.track('PayButtonPressed');
-        }
+        trackTiktokEvent('D5IQ5E3C77UAODHQ3EQG', 'PayButtonPressed');
         switchScreen('notify');
     });
 
     // 5. Notify Me Action
-    buttons.notify.addEventListener('click', () => {
-        const email = inputs.email.value;
-        if (email && email.includes('@')) {
-            // Mock success
-            btns = buttons.notify;
-            btns.textContent = "Saved!";
-            btns.style.background = "#4CAF50";
-            btns.style.color = "white";
+    buttons.notify.addEventListener('click', async () => {
+        const email = inputs.email.value.trim();
+        inputs.email.value = email;
+        inputs.email.setCustomValidity('');
+
+        if (!email) {
+            inputs.email.setCustomValidity('Please enter your email address.');
+        } else if (!isValidEmail(email)) {
+            inputs.email.setCustomValidity('Please enter a valid email address.');
+        }
+
+        if (!inputs.email.checkValidity()) {
+            inputs.email.reportValidity();
+            inputs.email.focus();
+            inputs.email.style.borderColor = "#ff4444";
+            setTimeout(() => {
+                inputs.email.style.borderColor = "rgba(255,255,255,0.2)";
+            }, 1000);
+            return;
+        }
+
+        const notifyButton = buttons.notify;
+        const originalButtonText = notifyButton.textContent;
+
+        notifyButton.disabled = true;
+        notifyButton.textContent = "Saving...";
+
+        trackTiktokEvent('D5IQQ1BC77U666PPKKS0', 'NotifyMePressed');
+
+        try {
+            if (typeof window.saveNotifyEmail !== 'function') {
+                throw new Error('Firebase not initialized');
+            }
+            await window.saveNotifyEmail(email);
+
+            notifyButton.textContent = "Saved!";
+            notifyButton.style.background = "#4CAF50";
+            notifyButton.style.color = "white";
 
             msgs.notifySuccess.classList.remove('hidden');
-
-            // Disable button
-            btns.disabled = true;
-        } else {
-            // Simple validation error
+        } catch (err) {
+            console.error('Failed to save email:', err);
+            notifyButton.disabled = false;
+            notifyButton.textContent = originalButtonText;
+            inputs.email.setCustomValidity('Could not save. Please try again.');
+            inputs.email.reportValidity();
             inputs.email.style.borderColor = "#ff4444";
             setTimeout(() => {
                 inputs.email.style.borderColor = "rgba(255,255,255,0.2)";
