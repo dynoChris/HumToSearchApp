@@ -25,7 +25,7 @@
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
       import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-analytics.js";
-      import { getDatabase, ref, push, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+      import { getDatabase, ref, push, set, serverTimestamp, update } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
       // TODO: Add SDKs for Firebase products that you want to use
       // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -47,11 +47,91 @@
       const analytics = getAnalytics(app);
       const db = getDatabase(app);
 
-      window.saveNotifyEmail = async (email) => {
-        const entryRef = push(ref(db, "notifyEmails"));
+      const USER_ID_KEY = "hum_to_search_user_id";
+      const SESSION_ID_KEY = "hum_to_search_session_id";
+      const EVENT_INDEX_KEY = "hum_to_search_event_index";
+
+      function getStorage(storageGetter) {
+        try {
+          return storageGetter();
+        } catch (err) {
+          return null;
+        }
+      }
+
+      const localStore = getStorage(() => window.localStorage);
+      const sessionStore = getStorage(() => window.sessionStorage);
+
+      function generateId() {
+        if (window.crypto && typeof window.crypto.randomUUID === "function") {
+          return window.crypto.randomUUID();
+        }
+        return `id-${Math.random().toString(36).slice(2, 10)}-${Date.now()}`;
+      }
+
+      function getOrCreateId(storage, key) {
+        let currentId = null;
+        if (storage) {
+          try {
+            currentId = storage.getItem(key);
+          } catch (err) {
+            currentId = null;
+          }
+        }
+
+        if (!currentId) {
+          currentId = generateId();
+          if (storage) {
+            try {
+              storage.setItem(key, currentId);
+            } catch (err) {
+              // ignore storage errors
+            }
+          }
+        }
+
+        return currentId;
+      }
+
+      const userId = getOrCreateId(localStore, USER_ID_KEY);
+      const sessionId = getOrCreateId(sessionStore, SESSION_ID_KEY);
+      let eventIndex = 0;
+
+      if (localStore) {
+        const storedIndex = parseInt(localStore.getItem(EVENT_INDEX_KEY), 10);
+        if (!Number.isNaN(storedIndex) && storedIndex >= 0) {
+          eventIndex = storedIndex;
+        }
+      }
+
+      function nextEventIndex() {
+        eventIndex += 1;
+        if (localStore) {
+          try {
+            localStore.setItem(EVENT_INDEX_KEY, String(eventIndex));
+          } catch (err) {
+            // ignore storage errors
+          }
+        }
+        return eventIndex;
+      }
+
+      window.logUserEvent = async (eventName, data = {}) => {
+        const order = nextEventIndex();
+        const entryRef = ref(db, `users/${userId}/events/${order}`);
         await set(entryRef, {
+          event: eventName,
+          createdAt: serverTimestamp(),
+          sessionId,
+          order,
+          ...data
+        });
+      };
+
+      window.setUserEmail = async (email) => {
+        await update(ref(db, `users/${userId}/profile`), {
           email,
-          createdAt: serverTimestamp()
+          updatedAt: serverTimestamp()
         });
       };
     </script>

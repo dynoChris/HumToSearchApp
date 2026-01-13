@@ -38,6 +38,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function logUserEvent(eventName, data) {
+        if (typeof window.logUserEvent !== 'function') {
+            return;
+        }
+        window.logUserEvent(eventName, data).catch(err => {
+            console.error('Failed to log user event:', err);
+        });
+    }
+
+    logUserEvent('opened_website');
+    logUserEvent('screen_home');
+
+    let emailTypingStarted = false;
+    let emailInputTimeout = null;
+    let lastLoggedEmail = '';
+
+    function logEmailInput(value) {
+        const trimmed = value.trim();
+        if (trimmed === lastLoggedEmail) {
+            return;
+        }
+        lastLoggedEmail = trimmed;
+        logUserEvent('email_input_changed', {
+            length: trimmed.length,
+            isValid: trimmed.length > 0 ? isValidEmail(trimmed) : false
+        });
+    }
+
+    if (inputs.email) {
+        inputs.email.addEventListener('focus', () => {
+            logUserEvent('email_input_focused');
+        });
+
+        inputs.email.addEventListener('input', () => {
+            const value = inputs.email.value;
+            if (!emailTypingStarted && value.length > 0) {
+                emailTypingStarted = true;
+                logUserEvent('email_input_started');
+            }
+
+            if (emailInputTimeout) {
+                clearTimeout(emailInputTimeout);
+            }
+
+            emailInputTimeout = setTimeout(() => {
+                logEmailInput(inputs.email.value);
+            }, 400);
+        });
+
+        inputs.email.addEventListener('blur', () => {
+            if (emailInputTimeout) {
+                clearTimeout(emailInputTimeout);
+                emailInputTimeout = null;
+            }
+            logEmailInput(inputs.email.value);
+            logUserEvent('email_input_blurred');
+        });
+    }
+
     // === STATE MANAGEMENT ===
     let recordingTimeout;
     let processingTimeout;
@@ -56,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const target = screens[screenName];
         if (target) {
+            logUserEvent(`screen_${screenName}`);
             target.classList.remove('hidden');
             // Small delay to allow display:block to apply before opacity transition
             requestAnimationFrame(() => {
@@ -151,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1. Start Recording
     buttons.start.addEventListener('click', () => {
+        logUserEvent('tap_to_hum');
         switchScreen('recording');
         startRecording();
     });
@@ -159,11 +220,13 @@ document.addEventListener('DOMContentLoaded', () => {
     buttons.stopEarly.addEventListener('click', () => {
         clearTimeout(recordingTimeout);
         stopRecording();
+        logUserEvent('recording_cancelled');
         switchScreen('home');
     });
 
     // 2. Processing
     function startProcessing() {
+        logUserEvent('processing_started');
         switchScreen('processing');
 
         // Simulate 2.5 seconds of searching
@@ -174,12 +237,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 3. Show Paywall
     function showPaywall() {
+        logUserEvent('paywall_shown');
         switchScreen('paywall');
     }
 
     // 4. Pay Button Click -> Notify Screen
     buttons.pay.addEventListener('click', () => {
         trackTiktokEvent('D5IQ5E3C77UAODHQ3EQG', 'PayButtonPressed');
+        logUserEvent('pay_button_pressed');
         switchScreen('notify');
     });
 
@@ -214,10 +279,12 @@ document.addEventListener('DOMContentLoaded', () => {
         trackTiktokEvent('D5IQQ1BC77U666PPKKS0', 'NotifyMePressed');
 
         try {
-            if (typeof window.saveNotifyEmail !== 'function') {
+            if (typeof window.logUserEvent !== 'function' || typeof window.setUserEmail !== 'function') {
                 throw new Error('Firebase not initialized');
             }
-            await window.saveNotifyEmail(email);
+
+            await window.logUserEvent('notify_me_pressed', { email });
+            await window.setUserEmail(email);
 
             notifyButton.textContent = "Saved!";
             notifyButton.style.background = "#4CAF50";
