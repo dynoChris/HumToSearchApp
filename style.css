@@ -1,0 +1,331 @@
+:root {
+    --bg-color: #050510;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --primary-gradient: linear-gradient(135deg, #6C5DD3 0%, #4B37BC 100%);
+    --accent-color: #FF5EBA;
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --btn-height: 56px;
+    --border-radius: 16px;
+}
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-family);
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    /* Fancy background blob */
+    background-image: radial-gradient(circle at 50% 120%, #2a2168 0%, #050510 60%);
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    transform: scale(0.95);
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.content-center {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 24px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin: 0;
+    font-weight: 700;
+    background: linear-gradient(to right, #fff, #a5a5a5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+h2 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.subtext {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- BUTTONS --- */
+button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-family: var(--font-family);
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: var(--primary-gradient);
+    color: white;
+    height: var(--btn-height);
+    border-radius: 50px;
+    padding: 0 40px;
+    box-shadow: 0 10px 20px rgba(75, 55, 188, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.btn-primary.full-width {
+    width: 100%;
+    margin-top: 16px;
+}
+
+.btn-secondary {
+    background: white;
+    color: #4B37BC;
+    height: var(--btn-height);
+    border-radius: var(--border-radius);
+    padding: 0 24px;
+    margin-top: 12px;
+    width: 100%;
+}
+
+.btn-text {
+    background: transparent;
+    color: var(--text-secondary);
+    margin-top: 40px;
+}
+
+/* --- HOME --- */
+.logo-area {
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon-pulse {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+    box-shadow: 0 0 0 0 rgba(75, 55, 188, 0.7);
+    animation: pulse-shadow 2s infinite;
+}
+
+@keyframes pulse-shadow {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(108, 93, 211, 0.4);
+    }
+
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 20px rgba(108, 93, 211, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(108, 93, 211, 0);
+    }
+}
+
+/* --- VISUALIZER --- */
+.visualizer {
+    display: flex;
+    gap: 6px;
+    height: 60px;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.bar {
+    width: 8px;
+    background: var(--accent-color);
+    border-radius: 4px;
+    /* Removed animation for real-time JS control */
+    transition: height 0.05s ease;
+    height: 10px;
+    /* Default low height */
+}
+
+/* Removed specific nth-child heights and delays since JS handles it */
+
+/* --- PROCESSOR --- */
+.spinner {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--accent-color);
+    animation: spin 1s linear infinite;
+    margin-bottom: 24px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- PAYWALL --- */
+.success-icon {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.paywall-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    margin: 16px 0;
+}
+
+.blur-overlay {
+    filter: blur(8px);
+    opacity: 0.5;
+}
+
+.fake-song-row {
+    height: 20px;
+    background: white;
+    margin-bottom: 12px;
+    border-radius: 4px;
+    width: 80%;
+}
+
+.fake-song-row.shorter {
+    width: 60%;
+}
+
+.lock-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 5, 16, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 2;
+}
+
+.lock-content h3 {
+    margin: 8px 0 4px;
+}
+
+.price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.trust-badges {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+/* --- NOTIFY FORM --- */
+.notify-form {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 20px;
+    width: 100%;
+    margin-top: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+input[type="email"] {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+    font-family: var(--font-family);
+    font-size: 1rem;
+    margin: 10px 0;
+    outline: none;
+}
+
+input[type="email"]:focus {
+    border-color: var(--accent-color);
+}
+
+.success-msg {
+    color: #4CAF50;
+    margin-top: 12px;
+    font-weight: 600;
+}
