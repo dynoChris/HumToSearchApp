@@ -29,11 +29,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return emailPattern.test(value);
     }
 
-    function trackTiktokEvent(pixelId, eventName) {
+    function trackTiktokEvent(pixelId, eventName, data) {
         if (window.ttq && typeof window.ttq.instance === 'function') {
             const instance = window.ttq.instance(pixelId);
             if (instance && typeof instance.track === 'function') {
-                instance.track(eventName);
+                if (data) {
+                    instance.track(eventName, data);
+                } else {
+                    instance.track(eventName);
+                }
             }
         }
     }
@@ -244,6 +248,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Pay Button Click -> Notify Screen
     buttons.pay.addEventListener('click', () => {
         trackTiktokEvent('D5IQ5E3C77UAODHQ3EQG', 'PayButtonPressed');
+        trackTiktokEvent('D5IQ5E3C77UAODHQ3EQG', 'CompletePayment', {
+            value: 1.99,
+            currency: 'GBP',
+            content_id: 'search_pack_20',
+            content_type: 'product'
+        });
         logUserEvent('pay_button_pressed');
         switchScreen('notify');
     });
