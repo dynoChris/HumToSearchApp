@@ -164,6 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 4. Pay Button Click -> Notify Screen
     buttons.pay.addEventListener('click', () => {
+        if (window.ttq && typeof window.ttq.track === 'function') {
+            window.ttq.track('PayButtonPressed');
+        }
         switchScreen('notify');
     });
 
